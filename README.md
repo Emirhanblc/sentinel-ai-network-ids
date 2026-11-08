@@ -6,7 +6,7 @@ Canlı TCP/UDP trafiğini paket yükünü okumadan skorlayan, alarmı kaydeden v
 
 **Türkçe** | [English](README.en.md)
 
-[![build](https://github.com/Emirhanblc/AI-Destekli-A-Anomali-Tespit-Sistemi/actions/workflows/linter.yml/badge.svg)](https://github.com/Emirhanblc/AI-Destekli-A-Anomali-Tespit-Sistemi/actions/workflows/linter.yml)
+[![build](https://github.com/Emirhanblc/sentinel-ai-network-ids/actions/workflows/linter.yml/badge.svg)](https://github.com/Emirhanblc/sentinel-ai-network-ids/actions/workflows/linter.yml)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.6-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)

@@ -2,7 +2,7 @@
 
 [Türkçe](README.md) | **English**
 
-[![build](https://github.com/Emirhanblc/AI-Destekli-A-Anomali-Tespit-Sistemi/actions/workflows/linter.yml/badge.svg)](https://github.com/Emirhanblc/AI-Destekli-A-Anomali-Tespit-Sistemi/actions/workflows/linter.yml)
+[![build](https://github.com/Emirhanblc/sentinel-ai-network-ids/actions/workflows/linter.yml/badge.svg)](https://github.com/Emirhanblc/sentinel-ai-network-ids/actions/workflows/linter.yml)
 
 A defensive intrusion detection system (IDS) that inspects live TCP/UDP traffic
 without reading packet payloads. Header features are classified by a Random
