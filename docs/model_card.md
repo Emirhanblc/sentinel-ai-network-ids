@@ -19,7 +19,7 @@ Dinleyici aynı adları paket başlığı ve kaynak IP başına bir saniyelik pe
 2026-10-26 eğitiminde 315.342 dengelenmiş kayıt kullanıldı. Ayrılmış test
 kümesindeki doğruluk 0,9889; sınıf F1 değerleri Temiz 0,9832, DDoS 0,9936,
 Brute Force 0,9705 ve Port Scan 0,9928 oldu. Tam rapor
-`artifacts/metrics.json` dosyasındadır.
+`models/metrics.json` dosyasındadır.
 
 ## Sınırlamalar
 

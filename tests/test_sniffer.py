@@ -1,6 +1,6 @@
 from scapy.all import ICMP, IP, TCP, UDP
 
-from sniffer import PacketRateTracker, TrafficCounters, build_handler, extract_features
+from src.sniffer import PacketRateTracker, TrafficCounters, build_handler, extract_features
 
 
 def test_tcp_contract_and_flags() -> None:

@@ -7,14 +7,14 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "docs" / "screenshots" / "soc-overview.png"
+OUTPUT = ROOT / "assets" / "screenshots" / "soc-overview.png"
 
 
 def _application():
     """Windows'ta yazı tipi için native platform, diğerlerinde offscreen kullanır."""
     from PyQt5.QtWidgets import QApplication
 
-    from dashboard.theme import configure_qt_plugins
+    from ui.theme import configure_qt_plugins
 
     configure_qt_plugins()
     if sys.platform != "win32":
@@ -28,8 +28,8 @@ def capture(path: Path = OUTPUT) -> Path:
     app = _application()
     from PyQt5.QtCore import QTimer
 
-    from dashboard.main import Dashboard
-    from dashboard.theme import apply_theme
+    from ui.main import Dashboard
+    from ui.theme import apply_theme
 
     apply_theme(app)
     window = Dashboard(demo=True)

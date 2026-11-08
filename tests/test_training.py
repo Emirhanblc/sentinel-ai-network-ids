@@ -1,7 +1,7 @@
 import pandas as pd
 
-from shared.features import LABELS, MODEL_FEATURES
-from training.train import map_label, train
+from src.features import LABELS, MODEL_FEATURES
+from data.train import map_label, train
 
 
 def test_cicids_label_mapping() -> None:

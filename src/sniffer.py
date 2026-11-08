@@ -172,11 +172,13 @@ def run_sniffer(iface: str | None, output: str = "stdout", api_url: str = "") ->
     conf.verb = 0
     tracker = PacketRateTracker()
     counters = TrafficCounters()
-    emit: Callable[[dict[str, object]], None]
-    if output == "http":
-        emit = lambda payload: send_http(payload, api_url)
-    else:
-        emit = lambda payload: print(format_features(payload), flush=True)
+    def emit_http(payload: dict[str, object]) -> None:
+        send_http(payload, api_url)
+
+    def emit_stdout(payload: dict[str, object]) -> None:
+        print(format_features(payload), flush=True)
+
+    emit = emit_http if output == "http" else emit_stdout
     target = iface or "varsayılan arayüz"
     print(f"Dinleme başladı ({target}, {output}).", file=sys.stderr, flush=True)
     try:

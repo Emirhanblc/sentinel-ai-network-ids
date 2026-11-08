@@ -6,11 +6,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /service
 COPY requirements-api.txt .
 RUN pip install --no-cache-dir -r requirements-api.txt
-COPY app app
-COPY shared shared
-COPY artifacts/metrics.json artifacts/metrics.json
+COPY src src
+COPY models/metrics.json models/metrics.json
 
 RUN useradd --create-home ids
 USER ids
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

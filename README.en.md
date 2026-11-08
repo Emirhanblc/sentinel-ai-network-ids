@@ -2,6 +2,8 @@
 
 [Türkçe](README.md) | **English**
 
+[![build](https://github.com/Emirhanblc/AI-Destekli-A-Anomali-Tespit-Sistemi/actions/workflows/linter.yml/badge.svg)](https://github.com/Emirhanblc/AI-Destekli-A-Anomali-Tespit-Sistemi/actions/workflows/linter.yml)
+
 A defensive intrusion detection system (IDS) that inspects live TCP/UDP traffic
 without reading packet payloads. Header features are classified by a Random
 Forest model, stored in PostgreSQL, and shown on a dark PyQt5 SOC console. The
@@ -13,7 +15,7 @@ system **does not block** traffic; it alerts and records.
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688)](https://fastapi.tiangolo.com/)
 [![pytest](https://img.shields.io/badge/tests-pytest-blue)](tests/)
 
-![Sentinel SOC console](docs/screenshots/soc-overview.png)
+![Sentinel SOC console](assets/screenshots/soc-overview.png)
 
 ## Features
 
@@ -21,7 +23,7 @@ system **does not block** traffic; it alerts and records.
 - **Four-class model:** `Temiz` (benign), `DDoS`, `Brute Force`, `Port Scan` — Random Forest trained on CICIDS2017.
 - **Decision API:** FastAPI `POST /predict`, Pydantic validation, OpenAPI at `/docs`.
 - **Persistence:** All traffic and threat alerts are stored in PostgreSQL.
-- **Sentinel console:** KPI cards, green safe stream, red threat table; `python -m dashboard.main --demo` runs a showcase without the API.
+- **Sentinel console:** KPI cards, green safe stream, red threat table; `python -m ui.main --demo` runs a showcase without the API.
 - **Docker:** FastAPI and PostgreSQL start with one command. The image builds without `model.pkl`; the service stays `not_ready` until you train.
 
 ## Architecture
@@ -95,10 +97,10 @@ Change `POSTGRES_PASSWORD` in `.env`. Do not put real secrets in `.env.example`.
 ### Console showcase (no API)
 
 ```powershell
-python -m dashboard.main --demo
+python -m ui.main --demo
 ```
 
-Regenerate the screenshot with `python -m dashboard.capture_screenshots`.
+Regenerate the screenshot with `python -m ui.capture_screenshots`.
 
 ### API and database
 
@@ -110,15 +112,15 @@ docker compose up --build
 - Training metrics: <http://127.0.0.1:8000/metrics>
 - OpenAPI: <http://127.0.0.1:8000/docs>
 
-`artifacts/model.pkl` is not in Git. The image still builds; `/health` returns
+`models/model.pkl` is not in Git. The image still builds; `/health` returns
 `ready=false` and `/predict` returns HTTP 503 until you train. After training,
-Compose mounts `./artifacts` and loads the model without rebuilding the image.
+Compose mounts `./models` and loads the model without rebuilding the image.
 
 ### Model training (optional)
 
 ```powershell
-python -m training.download_dataset
-python -m training.train
+python -m data.download_dataset
+python -m data.train
 ```
 
 The downloader defaults to a public Parquet mirror of the UNB CICIDS2017 CSVs.
@@ -130,10 +132,10 @@ Open PowerShell **as administrator**, with the API running:
 
 ```powershell
 python -c "from scapy.all import get_if_list; print(get_if_list())"
-python sniffer.py --iface "INTERFACE_NAME" --output http
+python -m src.sniffer --iface "INTERFACE_NAME" --output http
 ```
 
-Live console (API required): `python -m dashboard.main`
+Live console (API required): `python -m ui.main`
 
 `SNIFFER_INTERFACE`, `SNIFFER_OUTPUT`, `IDS_API_URL`, and `IDS_DEMO` are
 supported.
@@ -156,7 +158,8 @@ pytest
 ```
 
 CI runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml) with
-`requirements-test.txt` and does not install PyQt5.
+`requirements-test.txt` and does not install PyQt5. Lint runs
+[`.github/workflows/linter.yml`](.github/workflows/linter.yml) with Ruff.
 
 Requirements traceability: [`isterler.md`](isterler.md). Label mapping:
 [`docs/label_mapping.md`](docs/label_mapping.md). Lab acceptance log:
@@ -169,3 +172,10 @@ Requirements traceability: [`isterler.md`](isterler.md). Label mapping:
 - Intentionally out of this release: sniffer queueing, class probabilities, API keys, console charts, UNSW-NB15.
 
 Suggested GitHub repository name: `sentinel-ai-network-ids`.
+
+## Contact
+
+**Emirhan Talha Balcı**
+
+- LinkedIn: [emirhan-talha-b](https://www.linkedin.com/in/emirhan-talha-b-886b2b265/)
+- Portfolio: [emirhantalhabalci.com](https://www.emirhantalhabalci.com)

@@ -1,4 +1,4 @@
-from training.export_figures import confusion_matrix_svg, export_confusion_matrix
+from data.export_figures import confusion_matrix_svg, export_confusion_matrix
 
 
 def test_confusion_matrix_svg_contains_labels_and_counts(tmp_path) -> None:

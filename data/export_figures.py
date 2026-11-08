@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from shared.features import LABELS
+from src.features import LABELS
 
 BG = "#0B1220"
 SURFACE = "#121A2B"
@@ -79,7 +79,7 @@ def export_confusion_matrix(metrics_path: Path, output_path: Path) -> Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--metrics", type=Path, default=Path("artifacts/metrics.json"))
+    parser.add_argument("--metrics", type=Path, default=Path("models/metrics.json"))
     parser.add_argument("--output", type=Path, default=Path("docs/figures/confusion-matrix.svg"))
     args = parser.parse_args()
     path = export_confusion_matrix(args.metrics, args.output)

@@ -4,9 +4,9 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import func, select
 
-from app.database import Base, SessionLocal, engine
-from app.main import app
-from app.models import Alert, Traffic
+from src.api.database import Base, SessionLocal, engine
+from src.api.main import app
+from src.api.models import Traffic
 
 
 class DummyModel:
@@ -71,7 +71,7 @@ def test_threat_creates_traffic_and_alert(client: TestClient) -> None:
 def test_metrics_returns_training_report(client: TestClient, tmp_path, monkeypatch) -> None:
     path = tmp_path / "metrics.json"
     path.write_text('{"accuracy": 0.9889, "labels": ["Temiz"]}', encoding="utf-8")
-    monkeypatch.setattr("app.main.METRICS_PATH", path)
+    monkeypatch.setattr("src.api.main.METRICS_PATH", path)
 
     response = client.get("/metrics")
     assert response.status_code == 200
@@ -80,7 +80,7 @@ def test_metrics_returns_training_report(client: TestClient, tmp_path, monkeypat
 
 
 def test_metrics_missing_file_is_404(client: TestClient, tmp_path, monkeypatch) -> None:
-    monkeypatch.setattr("app.main.METRICS_PATH", tmp_path / "missing.json")
+    monkeypatch.setattr("src.api.main.METRICS_PATH", tmp_path / "missing.json")
     response = client.get("/metrics")
     assert response.status_code == 404
 

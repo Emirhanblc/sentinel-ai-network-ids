@@ -16,7 +16,7 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
-from shared.features import LABELS, MODEL_FEATURES
+from src.features import LABELS, MODEL_FEATURES
 
 COLUMN_ALIASES = {
     "dst_port": ("destination port", "dst port", "dst_port"),
@@ -156,7 +156,7 @@ def train(data: pd.DataFrame, seed: int) -> tuple[Pipeline, dict[str, object]]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=Path("data/raw/MachineLearningCVE"))
-    parser.add_argument("--output", type=Path, default=Path("artifacts"))
+    parser.add_argument("--output", type=Path, default=Path("models"))
     parser.add_argument("--max-per-class", type=int, default=100_000)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()

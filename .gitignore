@@ -77,8 +77,11 @@ Desktop.ini
 *.log
 *.part
 
-# Proje artefaktları
+# Proje artefaktları — eğitilmiş model Git'e girmez, metrik JSON'u girer
 data/raw/
+models/*.pkl
+models/*.joblib
+models/*.png
 artifacts/*.pkl
 artifacts/*.png
-# Panel ve model kartı görselleri docs/screenshots ile docs/figures altında commit edilir.
+# Panel ve model kartı görselleri assets/ ile docs/figures altında commit edilir.

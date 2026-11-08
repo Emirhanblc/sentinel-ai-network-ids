@@ -336,7 +336,7 @@ class Dashboard(QMainWindow):
             return
         project_root = Path(__file__).resolve().parents[1]
         arguments = [
-            str(project_root / "sniffer.py"),
+            str(project_root / "src" / "sniffer.py"),
             "--output",
             "http",
             "--api-url",

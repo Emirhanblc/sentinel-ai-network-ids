@@ -1,4 +1,4 @@
-from dashboard.demo_data import DEMO_ALERTS, DEMO_TRAFFIC, lab_addresses
+from ui.demo_data import DEMO_ALERTS, DEMO_TRAFFIC, lab_addresses
 
 
 def test_demo_data_uses_lab_addresses_and_contract_fields() -> None:

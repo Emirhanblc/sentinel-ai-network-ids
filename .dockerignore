@@ -2,9 +2,8 @@ venv
 .venv
 data
 tests
-dashboard
+ui
 docs
-training
 .github
 __pycache__
 .pytest_cache
@@ -17,4 +16,5 @@ __pycache__
 *.md
 *.db
 *.log
+models/*.pkl
 artifacts/*.pkl

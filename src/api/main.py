@@ -14,13 +14,13 @@ from sqlalchemy import select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.database import Base, SessionLocal, engine
-from app.models import Alert, Traffic
-from app.schemas import AlertResponse, PacketFeatures, PredictionResponse, TrafficResponse
-from shared.features import LABELS, model_frame
+from src.api.database import Base, SessionLocal, engine
+from src.api.models import Alert, Traffic
+from src.api.schemas import AlertResponse, PacketFeatures, PredictionResponse, TrafficResponse
+from src.features import LABELS, model_frame
 
-MODEL_PATH = Path(os.getenv("MODEL_PATH", "artifacts/model.pkl"))
-METRICS_PATH = Path(os.getenv("METRICS_PATH", "artifacts/metrics.json"))
+MODEL_PATH = Path(os.getenv("MODEL_PATH", "models/model.pkl"))
+METRICS_PATH = Path(os.getenv("METRICS_PATH", "models/metrics.json"))
 
 
 def get_session():

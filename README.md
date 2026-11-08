@@ -6,6 +6,7 @@ Canlı TCP/UDP trafiğini paket yükünü okumadan skorlayan, alarmı kaydeden v
 
 **Türkçe** | [English](README.en.md)
 
+[![build](https://github.com/Emirhanblc/AI-Destekli-A-Anomali-Tespit-Sistemi/actions/workflows/linter.yml/badge.svg)](https://github.com/Emirhanblc/AI-Destekli-A-Anomali-Tespit-Sistemi/actions/workflows/linter.yml)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.6-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
@@ -38,7 +39,17 @@ flowchart LR
     class E ui
 ```
 
-Scapy dinleyicisi başlık özelliklerini `POST /predict` ile FastAPI'ye gönderir. Servis vektörü `artifacts/model.pkl` içindeki modele skorlatır, trafik ve tehdit kayıtlarını PostgreSQL'e yazar. PyQt5 paneli aynı API üzerinden `GET /health`, `GET /traffic`, `GET /alerts` ve `GET /metrics` okur. Dinleyici ile panel ana makinede çalışır; karar servisi ve veritabanı Docker Compose ile ayağa kalkar.
+Scapy dinleyicisi başlık özelliklerini `POST /predict` ile FastAPI'ye gönderir. Servis vektörü `models/model.pkl` içindeki modele skorlatır, trafik ve tehdit kayıtlarını PostgreSQL'e yazar. PyQt5 paneli aynı API üzerinden `GET /health`, `GET /traffic`, `GET /alerts` ve `GET /metrics` okur. Dinleyici ile panel ana makinede çalışır; karar servisi ve veritabanı Docker Compose ile ayağa kalkar.
+
+## Dizin
+
+```text
+src/       Karar API'si ve Scapy dinleyicisi
+ui/        PyQt5 SOC paneli
+models/    Eğitilmiş model ve metrikler
+data/      Veri seti indirme ve eğitim betikleri
+assets/    README görselleri
+```
 
 ## 📸 Ekran Görüntüleri
 
@@ -79,7 +90,7 @@ Docker Desktop'ta aynı adım `docker compose up --build` ile de çalışır.
 - Eğitim metrikleri: <http://127.0.0.1:8000/metrics>
 - OpenAPI: <http://127.0.0.1:8000/docs>
 
-`artifacts/model.pkl` depoda yoktur. Model yokken imaj yine derlenir; `/health` `ready=false` döner ve `/predict` HTTP 503 verir. Eğitimden sonra model `./artifacts` volume üzerinden yüklenir, imajı yeniden üretmek gerekmez.
+`models/model.pkl` depoda yoktur. Model yokken imaj yine derlenir; `/health` `ready=false` döner ve `/predict` HTTP 503 verir. Eğitimden sonra model `./models` volume üzerinden yüklenir, imajı yeniden üretmek gerekmez.
 
 **5. Paneli ve dinleyiciyi ana makinede açın**
 
@@ -87,21 +98,21 @@ Docker Desktop'ta aynı adım `docker compose up --build` ile de çalışır.
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python -m dashboard.main --demo
+python -m ui.main --demo
 ```
 
-Canlı panel için API ayaktayken `python -m dashboard.main`. Yönetici PowerShell'de arayüz listesi ve dinleyici:
+Canlı panel için API ayaktayken `python -m ui.main`. Yönetici PowerShell'de arayüz listesi ve dinleyici:
 
 ```powershell
 python -c "from scapy.all import get_if_list; print(get_if_list())"
-python sniffer.py --iface "ARAYUZ_ADI" --output http
+python -m src.sniffer --iface "ARAYUZ_ADI" --output http
 ```
 
 İsteğe bağlı eğitim:
 
 ```powershell
-python -m training.download_dataset
-python -m training.train
+python -m data.download_dataset
+python -m data.train
 ```
 
 ## Özellikler
@@ -143,6 +154,13 @@ Bu depo bir laboratuvar IDS'idir.
 pytest
 ```
 
-CI, PyQt5 kurmadan [`.github/workflows/ci.yml`](.github/workflows/ci.yml) üzerinden `requirements-test.txt` ile koşar. İster izi: [`isterler.md`](isterler.md). Etiket eşlemesi: [`docs/label_mapping.md`](docs/label_mapping.md). Kabul kaydı: [`docs/acceptance.md`](docs/acceptance.md).
+CI, PyQt5 kurmadan [`.github/workflows/ci.yml`](.github/workflows/ci.yml) üzerinden `requirements-test.txt` ile koşar. Kod kalitesi [`.github/workflows/linter.yml`](.github/workflows/linter.yml) ile Ruff üzerinden kontrol edilir. İster izi: [`isterler.md`](isterler.md). Etiket eşlemesi: [`docs/label_mapping.md`](docs/label_mapping.md). Kabul kaydı: [`docs/acceptance.md`](docs/acceptance.md).
 
 Lisans: [MIT](LICENSE).
+
+## İletişim
+
+**Emirhan Talha Balcı**
+
+- LinkedIn: [emirhan-talha-b](https://www.linkedin.com/in/emirhan-talha-b-886b2b265/)
+- Portföy: [emirhantalhabalci.com](https://www.emirhantalhabalci.com)
