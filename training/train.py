@@ -21,7 +21,7 @@ from shared.features import LABELS, MODEL_FEATURES
 COLUMN_ALIASES = {
     "dst_port": ("destination port", "dst port", "dst_port"),
     "packet_size": ("average packet size", "packet length mean", "packet_size"),
-    "send_rate": ("flow packets/s", "flow packets/s", "send_rate"),
+    "send_rate": ("flow packets/s", "send_rate"),
     "syn": ("syn flag count", "syn"),
     "ack": ("ack flag count", "ack"),
     "label": ("label",),

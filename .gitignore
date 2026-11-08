@@ -1,13 +1,84 @@
-venv/
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Sanal ortamlar
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Test, tip ve lint önbellekleri
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+htmlcov/
 .coverage
+.coverage.*
+coverage.xml
+*.cover
+.cache
+
+# Gizli ortam değişkenleri — .env asla commit edilmez
 .env
 .env.*
 !.env.example
-data/raw/
-artifacts/model.pkl
-artifacts/*.png
-*.log
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Veritabanı dosyaları
 *.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.sqlite-journal
+*.sqlite3-journal
+
+# IDE ve işletim sistemi
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Günlükler ve kısmi indirmeler
+*.log
+*.part
+
+# Proje artefaktları
+data/raw/
+artifacts/*.pkl
+artifacts/*.png
+# Panel ve model kartı görselleri docs/screenshots ile docs/figures altında commit edilir.

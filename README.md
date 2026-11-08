@@ -1,129 +1,141 @@
-# Yapay Zeka Destekli Ağ Anomali Tespit Sistemi
+# Sentinel
 
-Canlı TCP/UDP trafiğini paket yükünü okumadan inceleyen savunma amaçlı bir
-saldırı tespit sistemidir (IDS). Ağ başlıklarından çıkarılan özellikler Random
-Forest modeliyle sınıflandırılır, sonuçlar PostgreSQL'e kaydedilir ve PyQt5
-masaüstü panelinde gösterilir. Sistem trafiği engellemez.
+### Yapay Zeka Destekli Ağ Anomali Tespit Sistemi
 
-## Mimari akış
+Canlı TCP/UDP trafiğini paket yükünü okumadan skorlayan, alarmı kaydeden ve SOC paneline taşıyan laboratuvar saldırı tespit sistemi.
+
+**Türkçe** | [English](README.en.md)
+
+[![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.6-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+[![PyQt5](https://img.shields.io/badge/PyQt5-5.15-41CD52?style=for-the-badge&logo=qt&logoColor=white)](https://www.riverbankcomputing.com/software/pyqt/)
+
+## Vizyon
+
+Klasik imza tabanlı güvenlik duvarı, trafiği daha önce yazılmış kural ve imza listesiyle karşılaştırır. Listede satırı olmayan bir varyant sessizce geçer. Sentinel aynı soruya davranış tarafından bakar: Scapy, IPv4 TCP/UDP başlıklarından özellik çıkarır; yük açılmaz, şifreli içerik çözülmez. Bu vektör, CICIDS2017 üzerinde eğitilmiş Random Forest modeline gider ve akış `Temiz`, `DDoS`, `Brute Force` veya `Port Scan` olarak skorlanır. İmza satırı bulunmayan, buna rağmen bilinen saldırı davranışına benzeyen trafik böylece zero-day adayı olarak yüzeye çıkar. Sistem paketi düşürmez; kararı üretir, PostgreSQL'e yazar ve koyu temalı PyQt5 panelinde alarm olarak gösterir.
+
+## Mimari
 
 ```mermaid
 flowchart LR
-    A["Ağ arayüzü<br/>Npcap"] --> B["Scapy dinleyici<br/>TCP/UDP başlıkları"]
-    B -->|"POST /predict"| C["FastAPI<br/>karar servisi"]
-    M["CICIDS2017"] --> T["Model eğitimi<br/>scikit-learn"]
-    T --> R["Random Forest<br/>model.pkl"]
-    R --> C
-    C -->|"Trafik ve alarm kayıtları"| D[("PostgreSQL")]
-    C -->|"GET /health<br/>GET /traffic<br/>GET /alerts"| E["PyQt5 paneli"]
-    D --> C
+    A["Ağ<br/>Scapy"] --> B["FastAPI"]
+    B --> C["ML Model<br/>Random Forest"]
+    C --> D[("PostgreSQL")]
+    D --> E["PyQt5<br/>Dashboard"]
+
+    classDef net fill:#0b1220,stroke:#38bdf8,stroke-width:2px,color:#e2e8f0
+    classDef api fill:#042f2e,stroke:#2dd4bf,stroke-width:2px,color:#e2e8f0
+    classDef model fill:#431407,stroke:#fb923c,stroke-width:2px,color:#e2e8f0
+    classDef db fill:#1e1b4b,stroke:#a78bfa,stroke-width:2px,color:#e2e8f0
+    classDef ui fill:#052e16,stroke:#4ade80,stroke-width:2px,color:#e2e8f0
+
+    class A net
+    class B api
+    class C model
+    class D db
+    class E ui
 ```
 
-Çalışma zamanında Scapy dinleyicisi ve PyQt5 paneli ana bilgisayarda çalışır.
-FastAPI ile PostgreSQL servisleri Docker Compose tarafından yönetilir.
+Scapy dinleyicisi başlık özelliklerini `POST /predict` ile FastAPI'ye gönderir. Servis vektörü `artifacts/model.pkl` içindeki modele skorlatır, trafik ve tehdit kayıtlarını PostgreSQL'e yazar. PyQt5 paneli aynı API üzerinden `GET /health`, `GET /traffic`, `GET /alerts` ve `GET /metrics` okur. Dinleyici ile panel ana makinede çalışır; karar servisi ve veritabanı Docker Compose ile ayağa kalkar.
 
-## Kullanılan teknolojiler
+## 📸 Ekran Görüntüleri
 
-- **Scapy:** Ağ arayüzündeki IPv4 TCP/UDP paket başlıklarını yakalar ve model
-  girdilerini üretir.
-- **FastAPI:** Tahmin, sağlık, trafik ve alarm uçlarını sunar.
-- **PostgreSQL:** Trafik sınıflandırmalarını ve tehdit alarmlarını kalıcı olarak
-  saklar.
-- **Docker ve Docker Compose:** FastAPI ile PostgreSQL servislerini tekrarlanabilir
-  bir ortamda ayağa kaldırır.
-- **PyQt5:** Canlı güvenli trafik ve tehdit kayıtlarını gösteren masaüstü
-  panelini sağlar.
-- **scikit-learn:** CICIDS2017 verisiyle dört sınıflı Random Forest modelini
-  eğitir.
+![Dashboard](assets/dashboard.png)
 
-## Gereksinimler
+## Kurulum
 
-- Python 3.11 veya 3.12
-- Docker Desktop ve Docker Compose
-- Windows için **Npcap (zorunlu)**
-- Paket yakalama için yönetici yetkisi
+Python 3.11 veya 3.12, Docker Desktop ve paket yakalama için yönetici yetkisi gerekir. Canlı dinleme yalnızca Windows'ta Npcap ile çalışır. `--demo` paneli Npcap istemez.
 
-> [!IMPORTANT]
-> Windows'ta Scapy ile canlı paket yakalamak için
-> [Npcap](https://npcap.com/#download) kurulmuş olmalıdır. Kurulum sırasında
-> **Install Npcap in WinPcap API-compatible Mode** seçeneğini işaretleyin ve
-> dinleyiciyi ya da paneli yönetici olarak çalıştırın.
+**1. Depoyu klonlayın**
 
-## Yerel kurulum
+```powershell
+git clone https://github.com/Emirhanblc/sentinel-ai-network-ids.git
+cd sentinel-ai-network-ids
+```
 
-Depoyu klonladıktan sonra proje dizininde:
+**2. Ortam dosyasını oluşturun**
+
+```powershell
+copy .env.example .env
+```
+
+`.env` içinde `POSTGRES_PASSWORD=your_password_here` satırını güçlü bir parola ile değiştirin. `POSTGRES_USER` ve `POSTGRES_DB` yer tutucularını da kendi değerlerinizle güncelleyin. Gerçek parolayı `.env.example` içine yazmayın. `.env` Git'e girmez.
+
+**3. Windows için Npcap kurun**
+
+Canlı paket yakalama için [Npcap](https://npcap.com/#download) zorunludur. Kurulumda **Install Npcap in WinPcap API-compatible Mode** seçeneğini işaretleyin. Dinleyiciyi ve canlı paneli yönetici olarak çalıştırın.
+
+**4. API ve veritabanını ayağa kaldırın**
+
+```powershell
+docker-compose up --build
+```
+
+Docker Desktop'ta aynı adım `docker compose up --build` ile de çalışır.
+
+- Sağlık: <http://127.0.0.1:8000/health>
+- Eğitim metrikleri: <http://127.0.0.1:8000/metrics>
+- OpenAPI: <http://127.0.0.1:8000/docs>
+
+`artifacts/model.pkl` depoda yoktur. Model yokken imaj yine derlenir; `/health` `ready=false` döner ve `/predict` HTTP 503 verir. Eğitimden sonra model `./artifacts` volume üzerinden yüklenir, imajı yeniden üretmek gerekmez.
+
+**5. Paneli ve dinleyiciyi ana makinede açın**
 
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+python -m dashboard.main --demo
 ```
 
-Örnek ortam dosyasını kopyalayın ve `.env` içindeki PostgreSQL parolasını
-değiştirin. `.env` dosyası Git tarafından yok sayılır; gerçek parolaları
-`.env.example` içine yazmayın.
+Canlı panel için API ayaktayken `python -m dashboard.main`. Yönetici PowerShell'de arayüz listesi ve dinleyici:
 
 ```powershell
-Copy-Item .env.example .env
+python -c "from scapy.all import get_if_list; print(get_if_list())"
+python sniffer.py --iface "ARAYUZ_ADI" --output http
 ```
 
-Model henüz oluşturulmadıysa veri kümesini indirip modeli eğitin:
+İsteğe bağlı eğitim:
 
 ```powershell
 python -m training.download_dataset
 python -m training.train
 ```
 
-Veri indirme betiği varsayılan olarak UNB CICIDS2017 CSV dosyalarının herkese
-açık Parquet aynasını kullanır. Resmî ZIP yeniden erişilebilir olduğunda
-`--source official-zip` seçilebilir.
+## Özellikler
 
-## Docker ile API ve veritabanını başlatma
+- **Canlı dinleme:** Scapy, seçilen arayüzde IPv4 TCP/UDP başlıklarını yakalar.
+- **Dört sınıflı model:** `Temiz`, `DDoS`, `Brute Force`, `Port Scan`.
+- **Karar servisi:** FastAPI, Pydantic şeması, OpenAPI (`/docs`).
+- **Kayıt:** Trafik ve tehdit alarmları PostgreSQL'de durur.
+- **Sentinel paneli:** Özet kartları, akan temiz liste, kırmızı tehdit tablosu.
 
-Docker Desktop çalışırken proje kökünde şu komutu çalıştırın:
+## Eğitim sonucu
 
-```powershell
-docker-compose up --build
-```
+Ayrılmış CICIDS2017 akış test kümesi (315.342 dengelenmiş kayıt):
 
-Sonraki çalıştırmalarda imajı yeniden oluşturmak gerekmiyorsa doğrudan
-`docker-compose up` komutu kullanılabilir.
+| Sınıf | F1 |
+| --- | --- |
+| Temiz | 0,983 |
+| DDoS | 0,994 |
+| Brute Force | 0,970 |
+| Port Scan | 0,993 |
+| Doğruluk | 0,989 |
 
-- Sağlık kontrolü: <http://127.0.0.1:8000/health>
-- OpenAPI arayüzü: <http://127.0.0.1:8000/docs>
+![Karışıklık matrisi](docs/figures/confusion-matrix.svg)
 
-Model dosyası yoksa servis açılmaz; modeli eğittikten sonra Docker imajını
-yeniden oluşturun. Model yüklenemezse servis `not_ready` durumunda kalır ve
-`/predict` ucu HTTP 503 döndürür.
+Bu sayılar canlı paket yakalamanın başarısı değildir. Eğitim CICIDS2017 akış özetlerini kullanır; dinleyici tek paket ve 1 saniyelik kaynak penceresi üretir. Dağılım farkı [model kartında](docs/model_card.md) yazılıdır.
 
-## Dinleyiciyi çalıştırma
+## Güvenlik modeli
 
-PowerShell'i **yönetici olarak** açın. Kullanılabilir ağ arayüzlerini listeleyin:
+Bu depo bir laboratuvar IDS'idir.
 
-```powershell
-python -c "from scapy.all import get_if_list; print(get_if_list())"
-```
-
-Ardından trafiği FastAPI servisine göndererek dinleyiciyi başlatın:
-
-```powershell
-python sniffer.py --iface "ARAYUZ_ADI" --output http
-```
-
-API olmadan üretilen JSON kayıtlarını görmek için `--output stdout`
-kullanılabilir. `SNIFFER_INTERFACE`, `SNIFFER_OUTPUT` ve `IDS_API_URL` ortam
-değişkenleri de desteklenir.
-
-## Masaüstü paneli
-
-API ve veritabanı çalışırken:
-
-```powershell
-python -m dashboard.main
-```
-
-Panel API'yi 1,5 saniyede bir yeniler ve dinleyiciyi seçilen yerel ağ
-arayüzünde başlatıp durdurabilir.
+- Karar başlık özelliklerine dayanır.
+- API kimlik doğrulaması, TLS ve hız sınırı yoktur. `127.0.0.1` ve yetkili laboratuvar ağı içindir. Açık bırakılan `/predict`, sahte özelliklerle kayıt zehirlenmesine açıktır.
+- Sistem paket düşürmez, bağlantı kesmez ve otomatik engelleme yapmaz.
+- Loglara parola, bağlantı cümlesi ve paket yükü yazılmaz.
 
 ## Testler
 
@@ -131,5 +143,6 @@ arayüzünde başlatıp durdurabilir.
 pytest
 ```
 
-Kali/Ubuntu kabul adımları ve saha kontrolleri
-[`docs/acceptance.md`](docs/acceptance.md) dosyasındadır.
+CI, PyQt5 kurmadan [`.github/workflows/ci.yml`](.github/workflows/ci.yml) üzerinden `requirements-test.txt` ile koşar. İster izi: [`isterler.md`](isterler.md). Etiket eşlemesi: [`docs/label_mapping.md`](docs/label_mapping.md). Kabul kaydı: [`docs/acceptance.md`](docs/acceptance.md).
+
+Lisans: [MIT](LICENSE).

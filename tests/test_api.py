@@ -68,6 +68,23 @@ def test_threat_creates_traffic_and_alert(client: TestClient) -> None:
     assert len(client.get("/alerts").json()) == 1
 
 
+def test_metrics_returns_training_report(client: TestClient, tmp_path, monkeypatch) -> None:
+    path = tmp_path / "metrics.json"
+    path.write_text('{"accuracy": 0.9889, "labels": ["Temiz"]}', encoding="utf-8")
+    monkeypatch.setattr("app.main.METRICS_PATH", path)
+
+    response = client.get("/metrics")
+    assert response.status_code == 200
+    assert response.json()["accuracy"] == 0.9889
+    assert response.json()["labels"] == ["Temiz"]
+
+
+def test_metrics_missing_file_is_404(client: TestClient, tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr("app.main.METRICS_PATH", tmp_path / "missing.json")
+    response = client.get("/metrics")
+    assert response.status_code == 404
+
+
 def test_clean_filter_and_limit_validation(client: TestClient) -> None:
     app.state.model = DummyModel("Temiz")
     client.post("/predict", json=packet())

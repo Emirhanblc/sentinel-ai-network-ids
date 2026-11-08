@@ -7,7 +7,7 @@ operatörün yetkili olduğu Kali Linux veya Ubuntu ağında yürütülür.
 | --- | --- | --- |
 | K-01 sağlık ucu | Geçti | 2026-10-26: Docker API + PostgreSQL sağlıklı, `ready=true` |
 | K-02 geçerli tahmin ve trafik kaydı | Geçti | 2026-10-26: Docker üzerinde tahmin ve `traffic_id=1` |
-| K-03 422 ve kayıt açılmaması | Geçti (yerel) | 2026-10-26: HTTP 422, kayıt sayısı 1 olarak kaldı |
+| K-03 422 ve kayıt açılmaması | Geçti (yerel) | 2026-10-26: HTTP 422, `traffic` tablosuna satır yazılmadı |
 | K-04 port tarama uyarısı | Laboratuvar bekliyor | Yetkili ağ ve gerçek model gerekir |
 | K-05 SYN flood uyarısı | Laboratuvar bekliyor | Yetkili ağ ve gerçek model gerekir |
 | K-06 normal trafiğin yeşil listesi | Laboratuvar bekliyor | Panel ile gözlem |
@@ -20,3 +20,6 @@ görülme gecikmesi eklenmelidir.
 2026-10-26 geliştirme kontrolünde `pytest` sonucu 9 geçti olarak kaydedildi.
 Compose imajı oluşturuldu; API ve PostgreSQL konteynerleri sağlıklı duruma
 geldi. Gerçek modelle `Temiz` tahmini trafik tablosuna başarıyla yazıldı.
+
+2026-11-08: `pytest` 13 geçti (`GET /metrics`, demo verisi ve karışıklık
+matrisi figürü dahil). Model dosyası olmadan Docker imajı da derlenir.

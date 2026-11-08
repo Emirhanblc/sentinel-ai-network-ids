@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -19,11 +20,19 @@ from app.schemas import AlertResponse, PacketFeatures, PredictionResponse, Traff
 from shared.features import LABELS, model_frame
 
 MODEL_PATH = Path(os.getenv("MODEL_PATH", "artifacts/model.pkl"))
+METRICS_PATH = Path(os.getenv("METRICS_PATH", "artifacts/metrics.json"))
 
 
 def get_session():
     with SessionLocal() as session:
         yield session
+
+
+def _rows(session: Session, statement):
+    try:
+        return list(session.scalars(statement))
+    except SQLAlchemyError as exc:
+        raise HTTPException(status_code=503, detail="Veritabanı hazır değil.") from exc
 
 
 def database_ready() -> bool:
@@ -51,6 +60,19 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Yapay Zeka Destekli IDS", version="1.0.0", lifespan=lifespan)
+
+
+@app.get("/metrics")
+def metrics() -> dict[str, object]:
+    if not METRICS_PATH.is_file():
+        raise HTTPException(status_code=404, detail="Eğitim metrikleri bulunamadı.")
+    try:
+        payload = json.loads(METRICS_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=500, detail="Metrik dosyası okunamadı.") from exc
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=500, detail="Metrik dosyası geçersiz.")
+    return payload
 
 
 @app.get("/health")
@@ -121,7 +143,7 @@ def traffic(
     statement = select(Traffic)
     if verdict is not None:
         statement = statement.where(Traffic.verdict == verdict)
-    return list(session.scalars(statement.order_by(Traffic.captured_at.desc()).limit(limit)))
+    return _rows(session, statement.order_by(Traffic.captured_at.desc()).limit(limit))
 
 
 @app.get("/alerts", response_model=list[AlertResponse])
@@ -130,4 +152,4 @@ def alerts(
     session: Session = Depends(get_session),
 ) -> list[Alert]:
     statement = select(Alert).order_by(Alert.captured_at.desc()).limit(limit)
-    return list(session.scalars(statement))
+    return _rows(session, statement)

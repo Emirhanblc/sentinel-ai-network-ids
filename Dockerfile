@@ -8,7 +8,7 @@ COPY requirements-api.txt .
 RUN pip install --no-cache-dir -r requirements-api.txt
 COPY app app
 COPY shared shared
-COPY artifacts/model.pkl artifacts/model.pkl
+COPY artifacts/metrics.json artifacts/metrics.json
 
 RUN useradd --create-home ids
 USER ids

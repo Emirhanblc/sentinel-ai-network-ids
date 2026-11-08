@@ -1,0 +1,5 @@
+-r requirements-api.txt
+pytest==8.3.4
+pyarrow==18.1.0
+scapy==2.6.1
+httpx==0.28.1
